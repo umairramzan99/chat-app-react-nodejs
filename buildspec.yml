@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "Install global deps"
+      - npm install -g pm2
+  pre_build:
+    commands:
+      - echo "Build client"
+      - cd client
+      - npm ci
+      - npm run build
+      - cd ..
+      - echo "Install server deps"
+      - cd server
+      - npm ci
+      - cd ..
+  build:
+    commands:
+      - echo "Copy client build into server/public"
+      - rm -rf server/public || true
+      - mkdir -p server/public
+      - cp -r client/build/* server/public/
+      - echo "Package for CodeDeploy"
+      - rm -f app.zip || true
+      - zip -r app.zip appspec.yml scripts server client -x "**/node_modules/**"
+artifacts:
+  files:
+    - app.zip
