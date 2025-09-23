@@ -5,28 +5,21 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Install global deps"
-      - npm install -g pm2
-  pre_build:
-    commands:
-      - echo "Build client"
-      - cd client
-      - npm ci
-      - npm run build
-      - cd ..
-      - echo "Install server deps"
-      - cd server
-      - npm ci
-      - cd ..
+      - echo "Installing frontend & backend dependencies..."
+      - cd client && npm install && cd ..
+      - cd server && npm install && cd ..
+
   build:
     commands:
-      - echo "Copy client build into server/public"
-      - rm -rf server/public || true
+      - echo "Building frontend..."
+      - cd client && npm run build && cd ..
+      - echo "Moving frontend build into backend..."
+      - rm -rf server/public
       - mkdir -p server/public
       - cp -r client/build/* server/public/
-      - echo "Package for CodeDeploy"
-      - rm -f app.zip || true
-      - zip -r app.zip appspec.yml scripts server client -x "**/node_modules/**"
+      - echo "Zipping backend for deployment..."
+      - zip -r deploy.zip server
+
 artifacts:
   files:
-    - app.zip
+    - deploy.zip
