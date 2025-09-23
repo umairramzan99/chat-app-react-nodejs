@@ -5,18 +5,22 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Installing frontend & backend dependencies..."
-      - cd client && npm install && cd ..
-      - cd server && npm install && cd ..
+      - echo "Checking Node & npm versions..."
+      - node -v
+      - npm -v
+      - echo "Installing frontend dependencies..."
+      - if [ -d client ]; then cd client && npm install && cd ..; fi
+      - echo "Installing backend dependencies..."
+      - if [ -d server ]; then cd server && npm install && cd ..; fi
 
   build:
     commands:
       - echo "Building frontend..."
-      - cd client && npm run build && cd ..
+      - if [ -d client ]; then cd client && npm run build && cd ..; fi
       - echo "Moving frontend build into backend..."
-      - rm -rf server/public
+      - rm -rf server/public || true
       - mkdir -p server/public
-      - cp -r client/build/* server/public/
+      - cp -r client/build/* server/public/ || true
       - echo "Zipping backend for deployment..."
       - zip -r deploy.zip server
 
