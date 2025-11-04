@@ -7,7 +7,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: chat-app-frontend
-  ECS_SERVICE: jazzotpportal-frontend-service
+  ECS_SERVICE: chat-app-frontend-service
   ECS_CLUSTER: testcluster
   ECS_TASK_DEFINITION: taskdef.json
   CONTAINER_NAME: chat-app-frontend
